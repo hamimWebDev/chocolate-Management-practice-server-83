@@ -36,6 +36,35 @@ async function run() {
       res.send(result);
     });
 
+    // Updated Chocolate
+    app.get("/chocolates/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await chocolateCollection.findOne(query);
+      res.send(result);
+    });
+
+    app.put("/chocolates/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+      const updateChocolates = req.body;
+      const chocolate = {
+        $set: {
+          name: updateChocolates.name,
+          country: updateChocolates.country,
+          image: updateChocolates.image,
+          category: updateChocolates.category,
+        },
+      };
+      const result = await chocolateCollection.updateOne(
+        filter,
+        chocolate,
+        options
+      );
+      res.send(result);
+    });
+
     // Post Chocolates
     app.post("/chocolates", async (req, res) => {
       const newChocolate = req.body;
